@@ -1,0 +1,61 @@
+version: '3'
+services:
+    ldap:
+        build:
+            context: ./freeipa-container/
+            args:
+                realm: blipsandchitz.dog
+                ds-password: qwerty123
+                admin-password: qwerty123
+        image: freeipa/freeipa-container:latest
+        ports:
+            - "53:53/udp"
+            - "53:53"
+            - "80:80"
+            - "443:443"
+            - "389:389"
+            - "636:636"
+            - "88:88"
+            - "464:464"
+            - "88:88/udp"
+            - "464:464/udp"
+            - "123:123/udp"
+            - "7389:7389"
+            - "9443:9443"
+            - "9444:9444"
+            - "9445:9445"
+        hostname: ipa
+        domainname: blipsandchitz.dog
+
+        volumes:
+            - ipa-volume:/var/lib/ipa-data
+        networks:
+            mynet:
+                ipv4_address: 172.25.0.100
+        restart: "always"
+    radius:
+        build:
+            context: ./docker-alpine-radius/
+        image: marcelmaatkamp/freeradius:latest
+        ports:
+            - "1812:1812/udp"
+            - "1813:1813/udp"
+        volumes:
+            - "./docker-alpine-radius/clients.conf:/etc/raddb/clients.conf"
+            - "./docker-alpine-radius/users:/etc/raddb/users"
+        environment:
+            - "RADIUS_CLIENT_CREDENTIALS=1.2.3.4:password1234,5.6.7.8:password5678"
+        networks:
+            mynet:
+                ipv4_address: 172.25.0.101
+        restart: "always"
+networks:
+    mynet:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.25.0.0/24
+volumes:
+    ipa-volume:
+
+    

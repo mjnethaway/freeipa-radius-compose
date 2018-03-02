@@ -1,0 +1,6 @@
+[submodule "docker-alpine-radius"]
+	path = docker-alpine-radius
+	url = https://github.com/marcelmaatkamp/docker-alpine-radius
+[submodule "freeipa-container"]
+	path = freeipa-container
+	url = https://github.com/freeipa/freeipa-container
